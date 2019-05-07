@@ -1,11 +1,16 @@
+#!/usr/bin/env bash
 # @Author: Thomas Foubert <tfoubert>
 # @Date:   2019-04-25T17:50:59+02:00
 # @Email:  thomas@thomas-foubert.com
 # @Filename: autotunnel
 # @Last modified by:   thomas
-# @Last modified time: 2019-04-25T18:06:56+02:00
+# @Last modified time: 2019-05-07T16:36:29+02:00
 
-#!/usr/bin/env bash
+helper () {
+    echo "USAGE: ${0} [-h/--help] tunnel-alias-name"
+    echo "Requires root or sudo permision"
+    exit $1
+}
 
 if ! [ $(id -u) = 0 ]; then
    echo "The script need to be run as root." >&2
@@ -14,7 +19,14 @@ fi
 
 if [ -z $1 ]; then
     echo "Missing argument." >&2
-    exit 1
+    helper 1
+elif [ -n $2 ]; then
+    echo "Too much arguments." >&2
+    helper 1
+fi
+
+if [[ "$1" = "-h" ]] || [[ "$1" = "--help" ]]; then
+    helper 0
 fi
 
 if [ -z /usr/bin/autossh ]; then
