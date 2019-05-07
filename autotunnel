@@ -4,29 +4,34 @@
 # @Email:  thomas@thomas-foubert.com
 # @Filename: autotunnel
 # @Last modified by:   thomas
-# @Last modified time: 2019-05-07T16:36:29+02:00
+# @Last modified time: 2019-05-07T17:23:42+02:00
 
 helper () {
-    echo "USAGE: ${0} [-h/--help] tunnel-alias-name"
-    echo "Requires root or sudo permision"
+    echo "USAGE: ${0} [-h/--help] alias-name local-port remote-port"
+    echo "DESCRIPTION: "
+    echo -e "\t-h/--help\t\tDisplay this helper"
+    echo -e "\talias-name\t\tThe alias you want to give to your tunnel"
+    echo -e "\tlocal-port\t\tThe targeted local port for your tunnel"
+    echo -e "\tremote-port\t\tThe targeted remote port for your tunnel\n"
+    echo "The script must be run under root or sudo permisions"
     exit $1
 }
 
+if [[ "$1" = "-h" ]] || [[ "$1" = "--help" ]]; then
+    helper 0
+fi
+
 if ! [ $(id -u) = 0 ]; then
-   echo "The script need to be run as root." >&2
+   echo "The script must be run under root or sudo permisions." >&2
    exit 1
 fi
 
-if [ -z $1 ]; then
+if [[ -z $1 ]] || [[ -z $2 ]] || [[ -z $3 ]]; then
     echo "Missing argument." >&2
     helper 1
-elif [ -n $2 ]; then
+elif [[ -n $4 ]]; then
     echo "Too much arguments." >&2
     helper 1
-fi
-
-if [[ "$1" = "-h" ]] || [[ "$1" = "--help" ]]; then
-    helper 0
 fi
 
 if [ -z /usr/bin/autossh ]; then
@@ -36,8 +41,11 @@ fi
 
 cp basefile.txt autossh-tunnel.service
 sed -i.bak s/alias/${1}/g autossh-tunnel.service
+sed -i.bak s/lport/${2}/g autossh-tunnel.service
+sed -i.bak s/rport/${3}/g autossh-tunnel.service
 rm *.bak
 mv autossh-tunnel.service /etc/systemd/system/
+ssh-keyscan -H serveo.net >> ~/.ssh/known_hosts
 systemd daemon-reload
 systemd enable autossh-tunnel.service
 systemd start autossh-tunnel.service
