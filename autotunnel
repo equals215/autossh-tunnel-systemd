@@ -4,7 +4,7 @@
 # @Email:  thomas@thomas-foubert.com
 # @Filename: autotunnel
 # @Last modified by:   thomas
-# @Last modified time: 2019-05-13T18:19:39+02:00
+# @Last modified time: 2019-05-13T18:23:42+02:00
 
 helper () {
     echo "USAGE: ${0} [-h/--help] alias-name local-port remote-port"
@@ -34,7 +34,7 @@ elif [[ -n $4 ]]; then
     helper 1
 fi
 
-if [ -e /usr/bin/autossh ]; then
+if ! [ -e /usr/bin/autossh ]; then
     echo "Installing autossh"
     apt install autossh
 fi
@@ -52,7 +52,7 @@ echo "Preparing ssh connection"
 mkdir -p ~/.ssh
 touch ~/.ssh/known_hosts
 ssh-keyscan serveo.net >> ~/.ssh/known_hosts 2>/dev/null
-echo "Installing the service"
+echo s"Installing the service"
 systemctl daemon-reload
 systemctl enable autossh-tunnel.service
 systemctl start autossh-tunnel.service
