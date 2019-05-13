@@ -4,7 +4,7 @@
 # @Email:  thomas@thomas-foubert.com
 # @Filename: autotunnel
 # @Last modified by:   thomas
-# @Last modified time: 2019-05-13T18:08:21+02:00
+# @Last modified time: 2019-05-13T18:11:52+02:00
 
 helper () {
     echo "USAGE: ${0} [-h/--help] alias-name local-port remote-port"
@@ -39,15 +39,21 @@ if [ -e /usr/bin/autossh ]; then
     apt install autossh
 fi
 
+echo "Preparing the service file"
 cp basefile.txt autossh-tunnel.service
 sed -i.bak s/alias/${1}/g autossh-tunnel.service
 sed -i.bak s/lport/${2}/g autossh-tunnel.service
 sed -i.bak s/rport/${3}/g autossh-tunnel.service
+echo "Removing temp files"
 rm *.bak
+echo "Moving service file to system dir"
 mv autossh-tunnel.service /etc/systemd/system/
+echo "Preparing ssh connection"
 mkdir -p ~/.ssh
 touch ~/.ssh/known_hosts
 ssh-keyscan -H serveo.net >> ~/.ssh/known_hosts
+echo "Installing the service"
 systemd daemon-reload
 systemd enable autossh-tunnel.service
 systemd start autossh-tunnel.service
+echo "SSH Tunnel working, read the man to know how to access it"
