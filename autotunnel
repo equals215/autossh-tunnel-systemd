@@ -4,7 +4,7 @@
 # @Email:  thomas@thomas-foubert.com
 # @Filename: autotunnel
 # @Last modified by:   thomas
-# @Last modified time: 2019-05-13T18:18:06+02:00
+# @Last modified time: 2019-05-13T18:19:39+02:00
 
 helper () {
     echo "USAGE: ${0} [-h/--help] alias-name local-port remote-port"
@@ -53,7 +53,7 @@ mkdir -p ~/.ssh
 touch ~/.ssh/known_hosts
 ssh-keyscan serveo.net >> ~/.ssh/known_hosts 2>/dev/null
 echo "Installing the service"
-systemd daemon-reload
-systemd enable autossh-tunnel.service
-systemd start autossh-tunnel.service
+systemctl daemon-reload
+systemctl enable autossh-tunnel.service
+systemctl start autossh-tunnel.service
 echo "SSH Tunnel working, read the man to know how to access it"
